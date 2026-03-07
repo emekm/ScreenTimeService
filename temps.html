@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Mes Horaires d'Écran 📱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border: 5px solid;
+        }
+        
+        .card.school {
+            border-color: #FF6B6B;
+        }
+        
+        .card.weekend {
+            border-color: #4ECDC4;
+        }
+        
+        .card.vacation {
+            border-color: #FFE66D;
+        }
+        
+        .card-title {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .emoji {
+            font-size: 1.5em;
+        }
+        
+        .day-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            margin-bottom: 15px;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .day-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .time-slots {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .time-slot {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .total-time {
+            background: #e8f5e9;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        
+        .info-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 1.05em;
+        }
+        
+        .info-box strong {
+            color: #ff6b00;
+        }
+        
+        .vacation-notice {
+            background: linear-gradient(135deg, #FFE66D 0%, #FF6B9D 100%);
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 3px solid;
+        }
+        
+        .fun-tip {
+            background: #e1f5fe;
+            border-left: 5px solid #0288d1;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+        
+        .fun-tip::before {
+            content: "💡 ";
+            font-size: 1.3em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 MES HORAIRES D'ÉCRAN 📱</h1>
+            <p>Voici quand tu peux utiliser tes appareils ! 🎮📺🖥️</p>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #FF6B6B; background: #FFB3B3;"></div>
+                <span>Jours d'école</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #4ECDC4; background: #A0E7E5;"></div>
+                <span>Week-end</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #FFE66D; background: #FFF4A3;"></div>
+                <span>Vacances</span>
+            </div>
+        </div>
+        
+        <!-- Semaine -->
+        <div class="card school">
+            <div class="card-title">
+                <span class="emoji">📚</span>
+                <span>Pendant la semaine d'école</span>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">📍 Lundi</div>
+                <div class="time-slots">
+                    <div class="time-slot">16:00 - 18:00</div>
+                    <div class="time-slot">20:30 - 22:30</div>
+                    <div class="total-time">📊 4h total</div>
+                </div>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">📍 Mardi</div>
+                <div class="time-slots">
+                    <div class="time-slot">16:00 - 18:00</div>
+                    <div class="time-slot">20:30 - 22:30</div>
+                    <div class="total-time">📊 4h total</div>
+                </div>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">📍 Mercredi</div>
+                <div class="time-slots">
+                    <div class="time-slot">14:00 - 18:00</div>
+                    <div class="time-slot">20:30 - 22:30</div>
+                    <div class="total-time">📊 6h total</div>
+                </div>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">📍 Jeudi</div>
+                <div class="time-slots">
+                    <div class="time-slot">16:00 - 18:00</div>
+                    <div class="time-slot">20:30 - 22:30</div>
+                    <div class="total-time">📊 4h total</div>
+                </div>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">📍 Vendredi</div>
+                <div class="time-slots">
+                    <div class="time-slot">16:00 - 18:00</div>
+                    <div class="time-slot">20:00 - 23:30</div>
+                    <div class="total-time">📊 5.5h total</div>
+                </div>
+            </div>
+            
+            <div class="fun-tip">
+                Mercredi et vendredi, c'est les jours avec plus de temps libre ! 🎉
+            </div>
+        </div>
+        
+        <!-- Week-end -->
+        <div class="card weekend">
+            <div class="card-title">
+                <span class="emoji">🎉</span>
+                <span>Le week-end !</span>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">📍 Samedi</div>
+                <div class="time-slots">
+                    <div class="time-slot">09:00 - 12:00</div>
+                    <div class="time-slot">15:00 - 18:00</div>
+                    <div class="time-slot">20:00 - 23:30</div>
+                    <div class="total-time">📊 9.5h total</div>
+                </div>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">📍 Dimanche</div>
+                <div class="time-slots">
+                    <div class="time-slot">09:00 - 12:00</div>
+                    <div class="time-slot">15:00 - 18:00</div>
+                    <div class="time-slot">20:00 - 22:30</div>
+                    <div class="total-time">📊 8.5h total</div>
+                </div>
+            </div>
+            
+            <div class="fun-tip">
+                Le week-end, tu as beaucoup plus de liberté ! C'est le moment de t'amuser ! 🎮
+            </div>
+        </div>
+        
+        <!-- Vacances -->
+        <div class="card vacation">
+            <div class="card-title">
+                <span class="emoji">🏖️</span>
+                <span>Pendant les vacances</span>
+            </div>
+            
+            <div class="day-row">
+                <div class="day-name">☀️ Tous les jours</div>
+                <div class="time-slots">
+                    <div class="time-slot">09:00 - 12:00</div>
+                    <div class="time-slot">14:00 - 16:00</div>
+                    <div class="time-slot">17:00 - 19:00</div>
+                    <div class="time-slot">21:00 - 23:00</div>
+                    <div class="total-time">📊 9h total</div>
+                </div>
+            </div>
+            
+            <div class="vacation-notice">
+                🎊 Profite de tes vacances ! Les horaires sont plus généreux ! 🎊
+            </div>
+            
+            <div class="fun-tip">
+                Les prochaines grandes vacances commencent le 14 février 2026 ! À bientôt ! 🎊
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <strong>⚠️ À retenir :</strong> Quand ton temps d'écran est terminé, l'appareil s'éteindra automatiquement. Sois prêt à l'arrêter ! Mais avant ça, tu auras un avertissement pour te prévenir. 2 minutes avant de perdre accès, une alerte te dira : "Le temps d'écran autorisé est terminé."
+        </div>
+    </div>
+</body>
+</html>
