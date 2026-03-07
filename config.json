@@ -1,8 +1,9 @@
 {
   "overrideEnabled": 0,
 
-  "warning_minutes": [10],
-  "warning_message": "L'ordinateur va s'éteindre dans",
+  "warning_minutes": 10,
+  "warning_message": "Le temps d'écran autorisé est terminé.",
+  "shutdownEnabled" : 0,
 
   "horaires": {
     "override": [
@@ -28,6 +29,11 @@
   },
 
   "vacances_dates": [
+    ["2024-10-19", "2024-11-03"],
+    ["2024-12-21", "2025-01-05"],
+    ["2025-02-22", "2025-03-09"],
+    ["2025-04-19", "2025-05-04"],
+    ["2025-07-05", "2025-09-01"],
     ["2025-10-18", "2025-11-02"],
     ["2025-12-20", "2026-01-04"],
     ["2026-02-14", "2026-03-01"],
