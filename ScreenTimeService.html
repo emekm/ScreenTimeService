@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Temps Écran</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0e1117;--card:#1e2537;--border:#2a3349;
+    --accent:#5b9cf6;--accent2:#a78bfa;--green:#34d399;--orange:#fb923c;
+    --red:#f87171;--yellow:#fbbf24;--text:#e2e8f0;--muted:#64748b;--radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+  .bg-orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;animation:drift 14s ease-in-out infinite alternate;}
+  .orb1{width:500px;height:500px;background:var(--accent2);top:-150px;left:-100px;animation-delay:0s;}
+  .orb2{width:400px;height:400px;background:var(--accent);bottom:-100px;right:-80px;animation-delay:-5s;}
+  .orb3{width:300px;height:300px;background:var(--green);top:40%;left:60%;animation-delay:-9s;}
+  @keyframes drift{from{transform:translate(0,0) scale(1);}to{transform:translate(30px,40px) scale(1.08);}}
+
+  .wrap{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:40px 20px 60px;}
+
+  header{text-align:center;margin-bottom:32px;}
+  header .emoji-big{font-size:3.2rem;display:block;margin-bottom:8px;}
+  header h1{font-family:'Baloo 2',cursive;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
+  header p{margin-top:8px;color:var(--muted);font-size:.9rem;}
+
+  /* ── Statut config ── */
+  .cfg-status{
+    text-align:center;font-size:.75rem;margin-bottom:20px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .cfg-pill{padding:4px 14px;border-radius:99px;transition:all .4s;}
+  .cfg-pill.ok     {background:rgba(52,211,153,.1); color:var(--green);}
+  .cfg-pill.err    {background:rgba(248,113,113,.1);color:var(--red);}
+  .cfg-pill.loading{background:rgba(100,116,139,.1);color:var(--muted);}
+
+  /* ── Horloge ── */
+  .clock-bar{
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px 24px;margin-bottom:24px;font-family:'Baloo 2',cursive;flex-wrap:wrap;gap:12px;
+  }
+  .clock-time{font-size:2.6rem;font-weight:800;letter-spacing:-1px;
+    background:linear-gradient(135deg,#fff,#94a3b8);-webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;background-clip:text;}
+  .clock-sep{color:var(--border);font-size:1.2rem;}
+  .clock-date{color:var(--muted);font-size:.9rem;line-height:1.5;text-align:center;}
+  .badge-mode{padding:5px 14px;border-radius:99px;font-size:.78rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+  .badge-mode.semaine {background:rgba(91,156,246,.15);color:var(--accent); border:1px solid rgba(91,156,246,.3);}
+  .badge-mode.vacances{background:rgba(251,191,36,.15); color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
+  .badge-mode.override{background:rgba(167,139,250,.15);color:var(--accent2);border:1px solid rgba(167,139,250,.3);}
+
+  /* ── Status card ── */
+  .status-card{
+    border-radius:var(--radius);padding:26px;margin-bottom:22px;
+    border:1px solid var(--border);position:relative;overflow:hidden;
+    transition:background .5s, border-color .5s;
+  }
+  .status-card::before{content:'';position:absolute;inset:0;opacity:.07;background:var(--glow);}
+  .status-card.open  {--glow:var(--green); border-color:rgba(52,211,153,.4); background:linear-gradient(140deg,#161b27,#192e24);}
+  .status-card.closed{--glow:var(--red);   border-color:rgba(248,113,113,.4);background:linear-gradient(140deg,#161b27,#2d1a1a);}
+  .status-card.warn  {--glow:var(--orange);border-color:rgba(251,146,60,.4); background:linear-gradient(140deg,#161b27,#2c2016);}
+  .status-card.idle  {background:var(--card);border-color:var(--border);}
+
+  .status-header{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
+  .status-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;}
+  .open   .status-icon{background:rgba(52,211,153,.15);}
+  .closed .status-icon{background:rgba(248,113,113,.15);}
+  .warn   .status-icon{background:rgba(251,146,60,.15);}
+  .idle   .status-icon{background:rgba(100,116,139,.1);}
+  .status-title{font-family:'Baloo 2',cursive;font-size:1.45rem;font-weight:800;line-height:1.1;}
+  .open   .status-title{color:var(--green);}
+  .closed .status-title{color:var(--red);}
+  .warn   .status-title{color:var(--orange);}
+  .idle   .status-title{color:var(--muted);}
+  .status-sub{color:var(--muted);font-size:.88rem;margin-top:3px;}
+
+  /* Barre de progression */
+  .prog-wrap{margin-top:10px;}
+  .prog-labels{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:5px;}
+  .prog-bar{background:var(--border);border-radius:99px;height:9px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:99px;transition:width .8s ease;}
+  .open .prog-fill,.open.warn .prog-fill{background:linear-gradient(90deg,var(--green),#86efac);}
+  .warn .prog-fill{background:linear-gradient(90deg,var(--orange),#fed7aa);}
+
+  /* Countdown */
+  .countdown{display:flex;align-items:baseline;gap:5px;margin-top:14px;font-family:'Baloo 2',cursive;}
+  .cd-num{font-size:2.1rem;font-weight:800;color:var(--orange);}
+  .cd-lbl{font-size:.82rem;color:var(--muted);margin-right:4px;}
+  .cd-suffix{color:var(--muted);font-size:.84rem;margin-left:6px;}
+
+  /* ── Total ── */
+  .total-card{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px 22px;margin-bottom:22px;
+  }
+  .total-label{color:var(--muted);font-size:.85rem;}
+  .total-value{font-family:'Baloo 2',cursive;font-size:1.9rem;font-weight:800;
+    background:linear-gradient(135deg,var(--green),var(--accent));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+  /* ── Timeline ── */
+  .section-title{font-family:'Baloo 2',cursive;font-size:.88rem;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:1.6px;margin-bottom:12px;}
+  .timeline-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:22px;}
+  .tl-track{position:relative;height:26px;background:var(--border);border-radius:99px;overflow:hidden;margin:8px 0 6px;}
+  .tl-block{position:absolute;height:100%;border-radius:99px;}
+  .tl-block.past  {background:var(--muted);opacity:.35;}
+  .tl-block.active{background:var(--green);opacity:1;}
+  .tl-block.future{background:var(--accent);opacity:.55;}
+  .tl-now{position:absolute;top:-5px;bottom:-5px;width:3px;background:#fff;border-radius:99px;box-shadow:0 0 10px rgba(255,255,255,.8);z-index:2;}
+  .tl-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);}
+
+  /* ── Créneaux ── */
+  .slots-grid{display:flex;flex-direction:column;gap:9px;margin-bottom:22px;}
+  .slot-item{
+    display:flex;align-items:center;gap:14px;
+    background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 16px;
+    transition:border-color .25s,transform .25s;
+  }
+  .slot-item:hover{transform:translateX(5px);border-color:var(--accent);}
+  .slot-item.s-current{border-color:var(--green);  background:linear-gradient(90deg,#192e24 0%,var(--card) 60%);}
+  .slot-item.s-past   {opacity:.38;}
+  .slot-item.s-next   {border-color:rgba(91,156,246,.45);}
+  .slot-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .s-current .slot-dot{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite;}
+  .s-past    .slot-dot{background:var(--muted);}
+  .s-next    .slot-dot{background:var(--accent);}
+  .s-future  .slot-dot{background:var(--border);}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.5}}
+  .slot-times{font-family:'Baloo 2',cursive;font-size:1.12rem;font-weight:700;flex:1;}
+  .slot-dur  {font-size:.78rem;color:var(--muted);}
+  .slot-tag  {font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+  .slot-tag.t-now {background:rgba(52,211,153,.15);color:var(--green);}
+  .slot-tag.t-next{background:rgba(91,156,246,.15); color:var(--accent);}
+  .slot-tag.t-past{background:rgba(100,116,139,.1); color:var(--muted);}
+
+  /* ── Prochain créneau ── */
+  .next-card{
+    display:flex;align-items:center;gap:16px;
+    background:var(--card);border:1px solid rgba(91,156,246,.3);border-radius:var(--radius);
+    padding:18px 22px;margin-bottom:22px;
+  }
+  .next-card .nc-icon{font-size:1.8rem;}
+  .next-card .nc-lbl{font-size:.8rem;color:var(--muted);}
+  .next-card .nc-time{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--accent);}
+  .next-card .nc-in  {font-size:.8rem;color:var(--muted);}
+
+  footer{text-align:center;color:var(--muted);font-size:.75rem;margin-top:16px;line-height:1.8;}
+  footer a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--border);}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <span class="emoji-big">🎮</span>
+    <h1>Mon Temps Écran</h1>
+    <p>Rennes · Zone B · mis à jour en direct</p>
+  </header>
+
+  <!-- Statut config (discret) -->
+  <div class="cfg-status">
+    <span class="cfg-pill loading" id="cfg-pill">⏳ Chargement…</span>
+  </div>
+
+  <!-- Horloge -->
+  <div class="clock-bar">
+    <div class="clock-time" id="clock-time">--:--:--</div>
+    <div class="clock-sep">|</div>
+    <div class="clock-date" id="clock-date">—</div>
+    <div class="clock-sep">|</div>
+    <span class="badge-mode" id="badge-mode">…</span>
+  </div>
+
+  <!-- Statut principal -->
+  <div class="status-card idle" id="status-card">
+    <div class="status-header">
+      <div class="status-icon" id="s-icon">⏳</div>
+      <div>
+        <div class="status-title" id="s-title">Chargement…</div>
+        <div class="status-sub"   id="s-sub">Récupération de la configuration</div>
+      </div>
+    </div>
+    <!-- Barre de progression (injectée dynamiquement) -->
+    <div id="prog-wrap" class="prog-wrap" style="display:none">
+      <div class="prog-labels">
+        <span id="prog-start"></span>
+        <span id="prog-pct"></span>
+        <span id="prog-end"></span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <!-- Countdown -->
+    <div id="cdown" class="countdown" style="display:none">
+      <span class="cd-num" id="cd-h">00</span><span class="cd-lbl">h</span>
+      <span class="cd-num" id="cd-m">00</span><span class="cd-lbl">min</span>
+      <span class="cd-num" id="cd-s">00</span><span class="cd-lbl">sec</span>
+      <span class="cd-suffix">restantes dans ce créneau</span>
+    </div>
+  </div>
+
+  <!-- Total du jour -->
+  <div class="total-card">
+    <div class="total-label">⏱ Temps autorisé aujourd'hui</div>
+    <div class="total-value" id="total-time">--</div>
+  </div>
+
+  <!-- Timeline journée -->
+  <div class="section-title">📊 Ma journée</div>
+  <div class="timeline-wrap">
+    <div class="tl-track" id="tl-track">
+      <div class="tl-now" id="tl-now"></div>
+    </div>
+    <div class="tl-labels">
+      <span>00h</span><span>06h</span><span>12h</span><span>18h</span><span>24h</span>
+    </div>
+  </div>
+
+  <!-- Liste des créneaux -->
+  <div class="section-title">🕐 Créneaux autorisés</div>
+  <div class="slots-grid" id="slots-grid">
+    <div style="color:var(--muted);text-align:center;padding:20px;font-size:.9rem">Chargement…</div>
+  </div>
+
+  <!-- Prochain créneau (si hors créneau) -->
+  <div class="next-card" id="next-card" style="display:none">
+    <span class="nc-icon">⏳</span>
+    <div>
+      <div class="nc-lbl">Prochain créneau</div>
+      <div class="nc-time" id="nc-time">—</div>
+      <div class="nc-in"   id="nc-in">—</div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    Chargement de la configuration…
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  SOURCE CONFIG
+// ═══════════════════════════════════════════════════════════
+const CONFIG_URL = "https://raw.githubusercontent.com/emekm/ScreenTimeService/refs/heads/main/config.json";
+// Rechargement auto de la config toutes les 5 minutes
+const CONFIG_RELOAD_MS = 5 * 60 * 1000;
+
+// ═══════════════════════════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════════════════════════
+let CONFIG = null;
+
+const JOURS = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+const MOIS  = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+
+// Config embarquée de secours
+const FALLBACK = {
+  overrideEnabled: 0,
+  warning_minutes: 10,
+  warning_message: "Le temps d'écran autorisé est terminé.",
+  shutdownEnabled: 1,
+  horaires: {
+    override: [{start:"10:00",end:"12:00"}],
+    vacances: [{start:"09:00",end:"12:00"},{start:"14:00",end:"16:00"},{start:"17:00",end:"19:00"},{start:"21:00",end:"23:00"}],
+    semaine: {
+      "Lundi":   [{start:"16:00",end:"18:00"},{start:"20:30",end:"22:30"}],
+      "Mardi":   [{start:"16:00",end:"18:00"},{start:"20:30",end:"22:30"}],
+      "Mercredi":[{start:"14:00",end:"18:00"},{start:"20:30",end:"22:30"}],
+      "Jeudi":   [{start:"16:00",end:"18:00"},{start:"20:30",end:"22:30"}],
+      "Vendredi":[{start:"16:00",end:"18:00"},{start:"20:00",end:"23:30"}],
+      "Samedi":  [{start:"09:00",end:"11:00"},{start:"15:00",end:"18:00"},{start:"20:00",end:"23:30"}],
+      "Dimanche":[{start:"09:00",end:"11:00"},{start:"15:00",end:"18:00"},{start:"20:00",end:"22:30"}]
+    }
+  },
+  vacances_dates: [
+    ["2024-10-19","2024-11-03"],["2024-12-21","2025-01-05"],
+    ["2025-02-22","2025-03-09"],["2025-04-19","2025-05-04"],
+    ["2025-07-05","2025-09-01"],["2025-10-18","2025-11-02"],
+    ["2025-12-20","2026-01-04"],["2026-02-14","2026-03-01"],
+    ["2026-04-18","2026-05-03"],["2026-07-04","2026-09-01"]
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════
+//  CHARGEMENT CONFIG
+// ═══════════════════════════════════════════════════════════
+async function loadConfig() {
+  const pill = document.getElementById('cfg-pill');
+  pill.className = 'cfg-pill loading';
+  pill.textContent = '⏳ Synchronisation…';
+  try {
+    const uniqueUrl = CONFIG_URL + "?t=" + new Date().getTime();
+    const res = await fetch(uniqueUrl, { 
+        cache: 'no-store' 
+    });
+    //const res = await fetch(CONFIG_URL, { cache: 'no-store' });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    if (!json.horaires) throw new Error('JSON invalide');
+    CONFIG = json;
+    const t = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+    pill.className = 'cfg-pill ok';
+    pill.textContent = `✅ Config à jour · ${t}`;
+    document.getElementById('footer').innerHTML =
+      `Config chargée depuis <a href="https://github.com/emekm/ScreenTimeService" target="_blank">GitHub</a> · Vacances Zone B · ${t}`;
+  } catch(e) {
+    CONFIG = FALLBACK;
+    pill.className = 'cfg-pill err';
+    pill.textContent = `⚠️ Hors ligne — config par défaut`;
+    document.getElementById('footer').textContent = 'Configuration embarquée (GitHub inaccessible)';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+const toMin = hhmm => { const [h,m] = hhmm.split(':').map(Number); return h*60+m; };
+const pad2  = n => String(n).padStart(2,'0');
+
+function slotDur(s) {
+  const d = toMin(s.end) - toMin(s.start), h = Math.floor(d/60), m = d%60;
+  return h > 0 ? (m > 0 ? `${h}h${pad2(m)}` : `${h}h`) : `${m}min`;
+}
+
+function isVacances(date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return (CONFIG.vacances_dates || []).some(([a,b]) => d >= new Date(a) && d <= new Date(b));
+}
+
+function getMode(date) {
+  if (CONFIG.overrideEnabled === 1) return 'override';
+  return isVacances(date) ? 'vacances' : 'semaine';
+}
+
+function getSlots(date) {
+  const mode = getMode(date);
+  if (mode === 'override') return CONFIG.horaires.override || [];
+  if (mode === 'vacances') return CONFIG.horaires.vacances || [];
+  return (CONFIG.horaires.semaine || {})[JOURS[date.getDay()]] || [];
+}
+
+function nowMin() {
+  const n = new Date();
+  return n.getHours()*60 + n.getMinutes() + n.getSeconds()/60;
+}
+
+function totalMin(slots) { return slots.reduce((t,s) => t + toMin(s.end) - toMin(s.start), 0); }
+function curSlot(slots)  { const nm = nowMin(); return slots.find(s => nm >= toMin(s.start) && nm < toMin(s.end)) || null; }
+function nxtSlot(slots)  { const nm = nowMin(); return slots.find(s => toMin(s.start) > nm) || null; }
+
+// ═══════════════════════════════════════════════════════════
+//  RENDU — appelé chaque seconde
+// ═══════════════════════════════════════════════════════════
+function render() {
+  if (!CONFIG) return;
+
+  const now   = new Date();
+  const slots = getSlots(now);
+  const mode  = getMode(now);
+  const nm    = nowMin();
+  const cur   = curSlot(slots);
+  const nxt   = nxtSlot(slots);
+
+  // ── Horloge
+  document.getElementById('clock-time').textContent = now.toLocaleTimeString('fr-FR');
+  document.getElementById('clock-date').textContent =
+    `${JOURS[now.getDay()]} ${now.getDate()} ${MOIS[now.getMonth()]} ${now.getFullYear()}`;
+
+  // ── Badge mode
+  const badge = document.getElementById('badge-mode');
+  const modes = {
+    override: ['⚙️ Override',          'override'],
+    vacances: ['🏖️ Vacances scolaires','vacances'],
+    semaine:  ['📚 Semaine scolaire',  'semaine' ]
+  };
+  [badge.textContent, badge.className] = [modes[mode][0], 'badge-mode ' + modes[mode][1]];
+
+  // ── Status card
+  const sc  = document.getElementById('status-card');
+  const pw  = document.getElementById('prog-wrap');
+  const cw  = document.getElementById('cdown');
+  const nc  = document.getElementById('next-card');
+
+  if (cur) {
+    const startM = toMin(cur.start), endM = toMin(cur.end);
+    const left   = endM - nm;                                       // minutes restantes
+    const pct    = Math.min(100, ((nm - startM) / (endM - startM)) * 100);
+    const warn   = (CONFIG.warning_minutes || [5,2,1]).some(w => left <= w);
+
+    sc.className = warn ? 'status-card warn' : 'status-card open';
+    document.getElementById('s-icon').textContent  = warn ? '⚠️' : '✅';
+    document.getElementById('s-title').textContent = warn ? 'Bientôt terminé !' : 'Ordinateur autorisé';
+    document.getElementById('s-sub').textContent   = `Créneau ${cur.start} → ${cur.end}  ·  ${slotDur(cur)}`;
+
+    // Barre progression
+    pw.style.display = 'block';
+    document.getElementById('prog-start').textContent = cur.start;
+    document.getElementById('prog-end').textContent   = cur.end;
+    document.getElementById('prog-pct').textContent   = `${Math.round(pct)}% écoulé`;
+    document.getElementById('prog-fill').style.width  = pct + '%';
+
+    // Countdown
+    const totSec = Math.max(0, Math.floor(left * 60));
+    cw.style.display = 'flex';
+    document.getElementById('cd-h').textContent = pad2(Math.floor(totSec / 3600));
+    document.getElementById('cd-m').textContent = pad2(Math.floor((totSec % 3600) / 60));
+    document.getElementById('cd-s').textContent = pad2(totSec % 60);
+
+    nc.style.display = 'none';
+
+  } else {
+    sc.className = 'status-card closed';
+    document.getElementById('s-icon').textContent  = '🔒';
+    document.getElementById('s-title').textContent = 'Ordinateur verrouillé';
+    document.getElementById('s-sub').textContent   = slots.length === 0
+      ? "Aucun créneau configuré pour aujourd'hui"
+      : "En dehors des créneaux autorisés";
+    pw.style.display = 'none';
+    cw.style.display = 'none';
+
+    if (nxt) {
+      nc.style.display = 'flex';
+      document.getElementById('nc-time').textContent = `${nxt.start} → ${nxt.end}`;
+      const wait = Math.ceil(toMin(nxt.start) - nm);
+      const wh = Math.floor(wait / 60), wm = wait % 60;
+      document.getElementById('nc-in').textContent = `Dans ${wh > 0 ? wh + 'h ' : ''}${wm} min`;
+    } else {
+      nc.style.display = 'none';
+    }
+  }
+
+  // ── Total
+  const tot = totalMin(slots), th = Math.floor(tot/60), tm = tot%60;
+  document.getElementById('total-time').textContent =
+    th > 0 ? `${th}h ${pad2(tm)}` : `${tm}m`;
+
+  // ── Timeline
+  renderTimeline(slots, nm);
+
+  // ── Créneaux liste
+  renderSlots(slots, nm);
+}
+
+// ── Timeline ──────────────────────────────────────────────
+function renderTimeline(slots, nm) {
+  const track = document.getElementById('tl-track');
+  // Supprime les anciens blocs (conserve #tl-now)
+  [...track.children].forEach(c => { if (c.id !== 'tl-now') c.remove(); });
+
+  slots.forEach(s => {
+    const x1 = (toMin(s.start) / 1440) * 100;
+    const x2 = (toMin(s.end)   / 1440) * 100;
+    const div = document.createElement('div');
+    div.className = 'tl-block ' +
+      (nm > toMin(s.end) ? 'past' : nm >= toMin(s.start) ? 'active' : 'future');
+    div.style.left  = x1 + '%';
+    div.style.width = (x2 - x1) + '%';
+    track.insertBefore(div, document.getElementById('tl-now'));
+  });
+
+  document.getElementById('tl-now').style.left = ((nm / 1440) * 100) + '%';
+}
+
+// ── Liste des créneaux ────────────────────────────────────
+function renderSlots(slots, nm) {
+  const grid = document.getElementById('slots-grid');
+  grid.innerHTML = '';
+
+  if (slots.length === 0) {
+    grid.innerHTML = '<div style="color:var(--muted);text-align:center;padding:24px;font-size:.9rem">Aucun créneau configuré pour aujourd\'hui</div>';
+    return;
+  }
+
+  let firstNextDone = false;
+  slots.forEach(s => {
+    const sM = toMin(s.start), eM = toMin(s.end);
+    const isCur  = nm >= sM && nm < eM;
+    const isPast = nm >= eM;
+    const isNext = !isCur && !isPast && !firstNextDone && sM > nm;
+    if (isNext) firstNextDone = true;
+
+    const cls = isCur ? 's-current' : isPast ? 's-past' : isNext ? 's-next' : 's-future';
+    const tag = isCur  ? '<span class="slot-tag t-now">● En cours</span>'
+              : isPast ? '<span class="slot-tag t-past">Terminé</span>'
+              : isNext ? '<span class="slot-tag t-next">Suivant</span>'
+              : '';
+
+    const div = document.createElement('div');
+    div.className = 'slot-item ' + cls;
+    div.innerHTML = `
+      <div class="slot-dot"></div>
+      <div style="flex:1">
+        <div class="slot-times">${s.start} → ${s.end}</div>
+        <div class="slot-dur">${slotDur(s)}</div>
+      </div>
+      ${tag}`;
+    grid.appendChild(div);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+
+// Horloge tourne immédiatement
+setInterval(() => {
+  const el = document.getElementById('clock-time');
+  if (el) el.textContent = new Date().toLocaleTimeString('fr-FR');
+}, 1000);
+
+// Chargement initial puis rechargement automatique toutes les 5 min
+(async function init() {
+  await loadConfig();
+  render();
+  setInterval(render, 1000);
+  setInterval(loadConfig, CONFIG_RELOAD_MS);
+})();
+</script>
+</body>
+</html>
