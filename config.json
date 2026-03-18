@@ -19,7 +19,7 @@
     "semaine": {
       "Lundi":    [{ "start": "16:00", "end": "20:00" }],
       "Mardi":    [{ "start": "16:00", "end": "20:00" }],
-      "Mercredi": [{ "start": "14:00", "end": "20:00" }],
+      "Mercredi": [{ "start": "12:00", "end": "14:00" }],
       "Jeudi":    [{ "start": "16:00", "end": "20:00" }],
       "Vendredi": [{ "start": "16:00", "end": "22:00" }],
       "Samedi":   [{ "start": "09:00", "end": "12:00" }, { "start": "18:00", "end": "22:00" }],
