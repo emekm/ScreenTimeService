@@ -1,13 +1,12 @@
 {
-  "overrideEnabled": 1,
-
+  "overrideEnabled": 0,
   "warning_minutes": 2,
   "warning_message": "Le temps d'écran autorisé est terminé.",
   "shutdownEnabled" : 1,
 
   "horaires": {
     "override": [
-      { "start": "14:00", "end": "22:00" }
+      { "start": "16:00", "end": "20:00" }
     ],
 
     "vacances": [
@@ -18,13 +17,13 @@
     ],
 
     "semaine": {
-      "Lundi":    [{ "start": "16:00", "end": "18:00" }, { "start": "20:00", "end": "22:00" }],
-      "Mardi":    [{ "start": "16:00", "end": "18:00" }, { "start": "20:00", "end": "22:00" }],
-      "Mercredi": [{ "start": "12:00", "end": "14:00" }, { "start": "20:00", "end": "22:00" }],
-      "Jeudi":    [{ "start": "16:00", "end": "18:00" }, { "start": "20:00", "end": "22:00" }],
-      "Vendredi": [{ "start": "16:00", "end": "18:00" }, { "start": "20:00", "end": "23:30" }],
-      "Samedi":   [{ "start": "09:00", "end": "19:00" }, { "start": "20:00", "end": "23:30" }],
-      "Dimanche": [{ "start": "09:00", "end": "12:00" }, { "start": "15:00", "end": "18:00" }, { "start": "20:00", "end": "22:00" }]
+      "Lundi":    [{ "start": "16:00", "end": "20:00" }],
+      "Mardi":    [{ "start": "16:00", "end": "20:00" }],
+      "Mercredi": [{ "start": "14:00", "end": "20:00" }],
+      "Jeudi":    [{ "start": "16:00", "end": "20:00" }],
+      "Vendredi": [{ "start": "16:00", "end": "22:00" }],
+      "Samedi":   [{ "start": "09:00", "end": "12:00" }, { "start": "18:00", "end": "22:00" }],
+      "Dimanche": [{ "start": "09:00", "end": "11:00" }, { "start": "15:00", "end": "20:00" }]
     }
   },
 
