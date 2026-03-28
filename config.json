@@ -1,12 +1,12 @@
 {
-  "overrideEnabled": 1,
+  "overrideEnabled": 0,
   "warning_minutes": 2,
   "warning_message": "Le temps d'écran autorisé est terminé.",
   "shutdownEnabled" : 1,
 
   "horaires": {
     "override": [
-      { "start": "16:00", "end": "22:59" }
+      { "start": "16:00", "end": "20:00" }
     ],
 
     "vacances": [
