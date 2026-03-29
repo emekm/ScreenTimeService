@@ -1,12 +1,12 @@
 {
-  "overrideEnabled": 0,
+  "overrideEnabled": 1,
   "warning_minutes": 2,
   "warning_message": "Le temps d'écran autorisé est terminé.",
   "shutdownEnabled" : 1,
 
   "horaires": {
     "override": [
-      { "start": "00:00", "end": "20:00" }
+      { "start": "09:00", "end": "01:00" }
     ],
 
     "vacances": [
@@ -19,7 +19,7 @@
     "semaine": {
       "Lundi":    [{ "start": "16:00", "end": "20:00" }],
       "Mardi":    [{ "start": "16:00", "end": "20:00" }],
-      "Mercredi": [{ "start": "12:00", "end": "14:00" }, { "start": "17:00", "end": "20:00" }],
+      "Mercredi": [{ "start": "13:00", "end": "20:00" }],
       "Jeudi":    [{ "start": "16:00", "end": "20:00" }],
       "Vendredi": [{ "start": "16:00", "end": "22:00" }],
       "Samedi":   [{ "start": "09:00", "end": "12:00" }, { "start": "18:00", "end": "22:00" }],
