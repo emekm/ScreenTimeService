@@ -6,8 +6,8 @@
 
   "horaires": {
     "override": [
-      { "start": "14:00", "end": "16:01" },
-      { "start": "16:00", "end": "22:30" }
+      { "start": "13:00", "end": "15:00" },
+      { "start": "18:00", "end": "22:00" }
     ],
 
     "vacances": [
