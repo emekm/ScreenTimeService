@@ -2,7 +2,7 @@
   "overrideEnabled": 1,
   "warning_minutes": 2,
   "warning_message": "Le temps d'écran autorisé est terminé.",
-  "shutdownEnabled" : 0,
+  "shutdownEnabled" : 1,
 
   "horaires": {
     "override": [
